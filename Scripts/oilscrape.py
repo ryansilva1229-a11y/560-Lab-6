@@ -34,20 +34,19 @@ for index, row in df.iterrows():
         url = f"https://www.drillingedge.com/search?type=wells&operator_name=&well_name={well_location}&api_no={api}&lease_key=&state=&county=&section=&township=&range=&min_boe=&max_boe=&min_depth=&max_depth=&field_formation="
 
         driver.get(url)
-        link = driver.find_element(By.XPATH,f"//a[contains(@href, '{api}')]")
+        link = driver.find_elements(By.XPATH,f"//a[contains(@href, '{api}')]")
         link.click()
         production = driver.find_elements(By.CSS_SELECTOR, "p.block_stat")
 
         for p in production:
                 value = p.text
                 if "Oil" in value:
-                        oil_count = value.find_element(By.CSS_SELECTOR, "span.dropcap").text
+                        oil_count = value.find_elements(By.CSS_SELECTOR, "span.dropcap").text
                 if "Gas" in value:
-                        gas_count = value.find_element(By.CSS_SELECTOR, "span.dropcap").text
-        well_status = driver.find_element(By.XPATH, "//th[text()='Well Status']/following-sibling::td").text
+                        gas_count = value.find_elements(By.CSS_SELECTOR, "span.dropcap").text
+        well_status = driver.find_elements(By.XPATH, "//th[text()='Well Status']/following-sibling::td").text
 
-        well_type = driver.find_element(By.XPATH, "//th[text()='Well Type']/following-sibling::td").text
-        closest_city = driver.find_element(By.XPATH, "//th[text()='Closest City']/following-sibling::td").text
+        well_type = driver.find_elements(By.XPATH, "//th[text()='Well Type']/following-sibling::td").text
+        closest_city = driver.find_elements(By.XPATH, "//th[text()='Closest City']/following-sibling::td").text
         updated_info.extend(oil_count,gas_count,well_status,well_type,closest_city)
 
-        
