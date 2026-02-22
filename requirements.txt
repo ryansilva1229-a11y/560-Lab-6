@@ -1,0 +1,10 @@
+pdfplumber
+pymupdf
+pdf2image
+pytesseract
+pillow
+requests
+beautifulsoup4
+duckdb
+pandas
+selenium
