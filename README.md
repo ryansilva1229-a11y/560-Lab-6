@@ -16,8 +16,14 @@ This project collects, extracts, and stores oil well data from PDF reports and d
 │   └── mydb.csv
 │
 ├── Scripts/
+│   ├── connect_DB.py
 │   ├── extract_pdf.py
 │   ├── oilscraper.py
+│   ├── index.html
+│   ├── main.js
+│   ├── package-lock.json
+│   ├── style.css
+│   ├── vite.config.js
 │   └── duckdb_testing.py
 │
 ├── requirements.txt
@@ -49,4 +55,21 @@ Step 2 – Scrape drillingedge.com for additional well fields:
 ```
 python3 Scripts/oilscrape.py
 ```
+
+Step 3 - Serve flask
+```
+python3 connectDB.py
+```
+
+Step 4 - Build and run the frontend
+```
+sudo apachectl start
+npm install
+npm run build
+sudo cp -r dist/* /Library/WebServer/Documents/
+```
+
+Step 5 - Visit http://localhost
+
+
 
