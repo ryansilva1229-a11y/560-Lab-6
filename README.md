@@ -30,8 +30,6 @@ This project collects, extracts, and stores oil well data from PDF reports and d
 └── README.md
 ```
 
-# Part 1
-
 ## Setup
 ### System Dependencies:
 ```
@@ -43,7 +41,6 @@ sudo apt-get install tesseract-ocr poppler-utils
 ```
 pip install -r requirements.txt
 ```
-
 
 ## Running the Pipeline
 Step 1 – Extract from PDFs: 
