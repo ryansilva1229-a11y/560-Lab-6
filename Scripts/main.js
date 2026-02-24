@@ -77,13 +77,13 @@ map.on('click', (event) => {
     let html = '';
 
     for (const [key, value] of Object.entries(props)) {
-      if (key === 'geometry' || key === 'stimulations') continue;
+      if (key === 'geometry' || key === 'stimulation') continue;
       html += `<p><strong>${key}:</strong> ${value}</p>`;
     }
 
-    if (props.stimulations && props.stimulations.length > 0) {
+    if (props.stimulation && props.stimulation.length > 0) {
       html += `<hr><strong>Stimulations</strong>`;
-      props.stimulations.forEach((s, i) => {
+      props.stimulation.forEach((s, i) => {
         html += `
           <div style="margin-top:8px; padding:8px; background:#f5f5f5; border-radius:4px; font-size:12px;">
             <strong>Stimulation ${i + 1}</strong><br>
@@ -114,3 +114,4 @@ map.on('pointermove', (event) => {
   const hit = map.hasFeatureAtPixel(event.pixel);
   document.getElementById('map').style.cursor = hit ? 'pointer' : '';
 });
+
