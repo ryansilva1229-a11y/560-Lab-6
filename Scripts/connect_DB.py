@@ -6,37 +6,94 @@ import json
 app = Flask(__name__)
 CORS(app, origins=["http://localhost"])
 
-db = duckdb.connect('mydb.duckdb', read_only=True)
+db = duckdb.connect('mydb.duckdb')
 db.execute("LOAD spatial")
+db.execute("""
+    ALTER TABLE OIL_DATA
+    ADD COLUMN geom GEOMETRY
+""")
+db.execute("""
+    UPDATE OIL_DATA
+    SET geom = ST_Point(
+        TRY_CAST(longitude AS DOUBLE),
+        TRY_CAST(latitude AS DOUBLE)
+    )
+    WHERE TRY_CAST(longitude AS DOUBLE) IS NOT NULL
+      AND TRY_CAST(latitude AS DOUBLE) IS NOT NULL
+""")
 
 @app.route("/locations")
-def locations():
+def get_locations():
     cursor = db.execute("""
-        SELECT API, well_name, well_number, well_status, well_type,
-               address, operator, state, closest_city, oil_bbl, gas_mcf,
-               ST_AsGeoJSON(geom), stimulations
-        FROM locations
+        SELECT
+            api_number,
+            well_name,
+            operator,
+            job_number,
+            job_type,
+            county,
+            state,
+            shl,
+            well_status,
+            well_type,
+            closest_city,
+            oil_bbl,
+            gas_mcf,
+            source_pdf,
+            stimulation,
+            ST_AsGeoJSON(geom) AS geom_json
+        FROM OIL_DATA
+        WHERE geom IS NOT NULL
+            AND latitude IS NOT NULL
+            AND longitude IS NOT NULL
     """)
 
     features = []
+
     for row in cursor.fetchall():
-        api, name, number, status, well_type, address, operator, state, city, oil, gas, geom_json, stimulations = row
+        (
+            api_number,
+            well_name,
+            operator,
+            job_number,
+            job_type,
+            county,
+            state,
+            shl,
+            well_status,
+            well_type,
+            closest_city,
+            oil_bbl,
+            gas_mcf,
+            source_pdf,
+            stimulation,
+            geom_json
+        ) = row
+
+        try:
+            stimulation_data = json.loads(stimulation) if stimulation else []
+        except json.JSONDecodeError:
+            stimulation_data = []
+
         features.append({
             "type": "Feature",
-            "geometry": json.loads(geom_json),
+            "geometry": json.loads(geom_json) if geom_json else None,
             "properties": {
-                "API": api,
-                "Well Name": name,
-                "Well Number": number,
-                "Status": status,
-                "Type": well_type,
-                "Address": address,
-                "Operator": operator,
-                "State": state,
-                "Closest City": city,
-                "Oil (bbl)": oil,
-                "Gas (mcf)": gas,
-                "stimulations": stimulations
+                "api_number": api_number,
+                "well_name": well_name,
+                "operator": operator,
+                "job_number": job_number,
+                "job_type": job_type,
+                "county": county,
+                "state": state,
+                "shl": shl,
+                "well_status": well_status,
+                "well_type": well_type,
+                "closest_city": closest_city,
+                "oil_bbl": oil_bbl,
+                "gas_mcf": gas_mcf,
+                "source_pdf": source_pdf,
+                "stimulation": stimulation_data
             }
         })
 
