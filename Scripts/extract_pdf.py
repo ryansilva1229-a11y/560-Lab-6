@@ -347,6 +347,7 @@ def process_pdfs(pdf_folder, db_file, csv_file):
     conn = duckdb.connect(db_file)
     conn.execute("DROP TABLE IF EXISTS OIL_DATA")
     conn.execute("CREATE TABLE OIL_DATA AS SELECT * FROM df")
+    conn.execute("ALTER TABLE OIL_DATA ADD PRIMARY KEY (api_number)")
     conn.close()
 
     df.to_csv(csv_file, index=False)
